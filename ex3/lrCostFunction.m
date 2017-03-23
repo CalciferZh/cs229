@@ -6,7 +6,7 @@ function [J, grad] = lrCostFunction(theta, X, y, lambda)
 %   gradient of the cost w.r.t. to the parameters. 
 
 % Initialize some useful values
-m = length(y); % number of training examples
+m = length(y); % number of training eXamples
 
 % You need to return the following variables correctly 
 J = 0;
@@ -19,12 +19,12 @@ grad = zeros(size(theta));
 %               derivatives of the cost w.r.t. each parameter in theta
 %
 % Hint: The computation of the cost function and gradients can be
-%       efficiently vectorized. For example, consider the computation
+%       efficiently vectorized. For eXample, consider the computation
 %
 %           sigmoid(X * theta)
 %
-%       Each row of the resulting matrix will contain the value of the
-%       prediction for that example. You can make use of this to vectorize
+%       Each row of the resulting matriX will contain the value of the
+%       prediction for that eXample. You can make use of this to vectorize
 %       the cost function and gradient computations. 
 %
 % Hint: When computing the gradient of the regularized cost function, 
@@ -36,14 +36,23 @@ grad = zeros(size(theta));
 %           grad = grad + YOUR_CODE_HERE (using the temp variable)
 %
 
+% disp(size(theta));
+% disp(size(X));
+hepo = sigmoid(X*theta);
+% disp(size(hepo));
+J = ((-y)' * log(hepo) - (1-y)' * log(1-hepo)) / m;
+% disp(size(J));
+grad = X' * (hepo - y) ./ m;
 
+temp = theta;
+temp(1) = 0;
 
+% regularize J
+J = J + lambda * temp' * temp / 2 / m;
 
-
-
-
-
-
+% regularize grad
+grad = grad + lambda * temp ./ m;
+% disp(size(grad));
 
 % =============================================================
 

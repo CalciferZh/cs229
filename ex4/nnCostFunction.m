@@ -38,7 +38,20 @@ Theta2_grad = zeros(size(Theta2));
 %         variable J. After implementing Part 1, you can verify that your
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
-%
+
+
+hepo = sigmoid([ones(size(X,1),1) sigmoid([ones(size(X,1),1) X] * Theta1')] * Theta2');
+J = -sum(sum(log(1-hepo), 2));
+for i = 1:size(y,1),
+	j = y(i);
+	J = J + log(1-hepo(i,j)) - log(hepo(i,j));
+end
+J = J / m;
+regu = sum([sum(Theta1(:,2:end).^2, 2); sum(Theta2(:,2:end).^2, 2)]) * lambda / 2 / m;
+J = J + regu;
+
+
+
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
@@ -54,6 +67,37 @@ Theta2_grad = zeros(size(Theta2));
 %               over the training examples if you are implementing it for the 
 %               first time.
 %
+
+Delta_1 = zeros(size(Theta1));
+Delta_2 = zeros(size(Theta2));
+for i = 1:m,
+	a_1 = X(i,:)';
+	a_1 = [1; a_1];
+
+	z_2 = Theta1 * a_1;
+	a_2 = sigmoid(z_2);
+	a_2 = [1; a_2];
+
+	z_3 = Theta2 * a_2;
+	a_3 = sigmoid(z_3);
+
+	delta_3 = a_3;
+	delta_3(y(i)) = delta_3(y(i)) - 1;
+
+	delta_2 = Theta2' * delta_3;
+	delta_2 = delta_2(2:end);
+	delta_2 = delta_2 .* sigmoidGradient(z_2);
+	% size(delta_3)
+	% size(a_2)
+	% size(Delta_2)
+	Delta_2 = Delta_2 + delta_3 * a_2';
+
+	Delta_1 = Delta_1 + delta_2 * a_1';
+end
+Theta1_grad = Delta_1 ./ m;
+Theta2_grad = Delta_2 ./ m;
+
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
@@ -62,23 +106,8 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Theta1_grad(:,2:end) = Theta1_grad(:,2:end) + lambda / m * Theta1(:,2:end);
+Theta2_grad(:,2:end) = Theta2_grad(:,2:end) + lambda / m * Theta2(:,2:end);
 
 % -------------------------------------------------------------
 

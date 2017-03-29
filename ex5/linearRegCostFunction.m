@@ -19,7 +19,12 @@ grad = zeros(size(theta));
 %               You should set J to the cost and grad to the gradient.
 %
 
-
+hepo_vec = X * theta;
+diff_vec = hepo_vec - y;
+J = (sum(diff_vec .^ 2)  + lambda * sum(theta(2:end,:) .^ 2)) / 2 / m;
+grad = X' * diff_vec;
+grad(2:end) = grad(2:end) + lambda * theta(2:end);
+grad = grad ./ m;
 
 
 
